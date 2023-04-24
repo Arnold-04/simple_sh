@@ -23,7 +23,8 @@ int _erratoi(char *s)
 				return (-1);
 		}
 		else
-			return (-1);}
+			return (-1);
+}
 	return (result);
 }
 
