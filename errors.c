@@ -1,21 +1,17 @@
 #include "shell.h"
-#include <unistd.h>
-
-#define WRITE_BUF_SIZE 1024
-#define BUF_FLUSH '\0'
 
 /**
- * _eputs - prints a string to stderr
- * @str: the string to be printed
+ * _eputs - it prints an input string
+ * @str: it is the string to be printed
  *
  * Return: Nothing
  */
-void _eputs(const char *str)
+void _eputs(char *str)
 {
-	if (!str)
-		return;
 	int i = 0;
 
+	if (!str)
+		return;
 	while (str[i] != '\0')
 	{
 		_eputchar(str[i]);
@@ -24,21 +20,20 @@ void _eputs(const char *str)
 }
 
 /**
- * _eputchar - writes a character to stderr
- * @c: the character to print
+ * _eputchar - writes the character c to stderr
+ * @c: The character to print
  *
  * Return: On success 1.
  * On error, -1 is returned, and errno is set appropriately.
  */
 int _eputchar(char c)
 {
-	int i = 0;
+	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
 	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		if (write(STDERR_FILENO, buf, i) < 0)
-			return (-1);
+		write(2, buf, i);
 		i = 0;
 	}
 	if (c != BUF_FLUSH)
@@ -47,22 +42,21 @@ int _eputchar(char c)
 }
 
 /**
- * _putfd - writes a character to a file descriptor
- * @c: the character to print
- * @fd: the file descriptor to write to
+ * _putfd - it writes the character c to given fd
+ * @c: The character to print
+ * @fd: it is The filedescriptor to write to
  *
  * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * On error, -1 is returned and errno is set appropriately.
  */
 int _putfd(char c, int fd)
 {
-	int i = 0;
+	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
 	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
-		if (write(fd, buf, i) < 0)
-			return (-1);
+		write(fd, buf, i);
 		i = 0;
 	}
 	if (c != BUF_FLUSH)
@@ -71,23 +65,22 @@ int _putfd(char c, int fd)
 }
 
 /**
- * _putsfd - prints a string to a file descriptor
- * @str: the string to be printed
- * @fd: the file descriptor to write to
+ * _putsfd - it prints an input string
+ * @str: it is the string to be printed
+ * @fd: it is the filedescriptor to write to
  *
- * Return: the number of characters printed
+ * Return: the number of characters put
  */
-int _putsfd(const char *str, int fd)
+int _putsfd(char *str, int fd)
 {
-	if (!str)
-		return (0);
 	int i = 0;
 
-	while (str[i] != '\0')
+	if (!str)
+		return (0);
+	while (*str)
 	{
-		if (_putfd(str[i], fd) < 0)
-			return (-1);
-		i++;
+		i += _putfd(*str++, fd);
 	}
 	return (i);
 }
+
